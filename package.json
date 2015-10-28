@@ -1,6 +1,6 @@
 {
   "name": "retort-json",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A retort that defaults to JSON responses",
   "main": "index.js",
   "scripts": {
@@ -23,7 +23,7 @@
   "devDependencies": {
     "tape": "^4.2.1"
   },
-  "keywords":[
+  "keywords": [
     "request",
     "response",
     "respond",
