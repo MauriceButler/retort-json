@@ -1,7 +1,8 @@
 var test = require('tape'),
     jsonRetorter = require('../'),
     errors = require('generic-errors'),
-    logger = {info: function(){}};
+    logger = {info: function(){}},
+    expectedHeaders = {'Content-Type': 'application/json'};
 
 function fakeServerCall(handler, request, response){
     handler(request || {}, response || {});
@@ -20,7 +21,7 @@ test('retort puts request and response on passed in object.', function(t){
 });
 
 test('retort sends 200 on .ok', function(t){
-    t.plan(1);
+    t.plan(2);
 
     var retorter = jsonRetorter(logger),
         routeHandler = retorter(function(retort){
@@ -28,14 +29,16 @@ test('retort sends 200 on .ok', function(t){
         });
 
     fakeServerCall(routeHandler, {}, {
-        end: function(){
-            t.equal(this.statusCode, 200);
-        }
+        writeHead: function(code, headers){
+            t.equal(code, 200);
+            t.deepEqual(headers, expectedHeaders);
+        },
+        end: function(){}
     });
 });
 
 test('retort sends 404 on .notFound', function(t){
-    t.plan(1);
+    t.plan(2);
 
     var retorter = jsonRetorter(logger),
         routeHandler = retorter(function(retort){
@@ -43,14 +46,16 @@ test('retort sends 404 on .notFound', function(t){
         });
 
     fakeServerCall(routeHandler, {}, {
-        end: function(){
-            t.equal(this.statusCode, 404);
-        }
+        writeHead: function(code, headers){
+            t.equal(code, 404);
+            t.deepEqual(headers, expectedHeaders);
+        },
+        end: function(){}
     });
 });
 
 test('retort sends 403 on .forbidden', function(t){
-    t.plan(1);
+    t.plan(2);
 
     var retorter = jsonRetorter(logger),
         routeHandler = retorter(function(retort){
@@ -58,14 +63,16 @@ test('retort sends 403 on .forbidden', function(t){
         });
 
     fakeServerCall(routeHandler, {}, {
-        end: function(){
-            t.equal(this.statusCode, 403);
-        }
+        writeHead: function(code, headers){
+            t.equal(code, 403);
+            t.deepEqual(headers, expectedHeaders);
+        },
+        end: function(){}
     });
 });
 
 test('retort sends 401 on .unauthorised', function(t){
-    t.plan(1);
+    t.plan(2);
 
     var retorter = jsonRetorter(logger),
         routeHandler = retorter(function(retort){
@@ -73,14 +80,16 @@ test('retort sends 401 on .unauthorised', function(t){
         });
 
     fakeServerCall(routeHandler, {}, {
-        end: function(){
-            t.equal(this.statusCode, 401);
-        }
+        writeHead: function(code, headers){
+            t.equal(code, 401);
+            t.deepEqual(headers, expectedHeaders);
+        },
+        end: function(){}
     });
 });
 
 test('retort sends 422 on .unprocessable', function(t){
-    t.plan(1);
+    t.plan(2);
 
     var retorter = jsonRetorter(logger),
         routeHandler = retorter(function(retort){
@@ -88,14 +97,16 @@ test('retort sends 422 on .unprocessable', function(t){
         });
 
     fakeServerCall(routeHandler, {}, {
-        end: function(){
-            t.equal(this.statusCode, 422);
-        }
+        writeHead: function(code, headers){
+            t.equal(code, 422);
+            t.deepEqual(headers, expectedHeaders);
+        },
+        end: function(){}
     });
 });
 
 test('retort sends 500 on .error', function(t){
-    t.plan(1);
+    t.plan(2);
 
     var retorter = jsonRetorter(logger),
         routeHandler = retorter(function(retort){
@@ -103,14 +114,16 @@ test('retort sends 500 on .error', function(t){
         });
 
     fakeServerCall(routeHandler, {}, {
-        end: function(){
-            t.equal(this.statusCode, 500);
-        }
+        writeHead: function(code, headers){
+            t.equal(code, 500);
+            t.deepEqual(headers, expectedHeaders);
+        },
+        end: function(){}
     });
 });
 
 test('retort handles empty error', function(t){
-    t.plan(1);
+    t.plan(2);
 
     var retorter = jsonRetorter(logger),
         routeHandler = retorter(function(retort){
@@ -118,14 +131,16 @@ test('retort handles empty error', function(t){
         });
 
     fakeServerCall(routeHandler, {}, {
-        end: function(){
-            t.equal(this.statusCode, 500);
-        }
+        writeHead: function(code, headers){
+            t.equal(code, 500);
+            t.deepEqual(headers, expectedHeaders);
+        },
+        end: function(){}
     });
 });
 
 test('retort handles non standard error code', function(t){
-    t.plan(1);
+    t.plan(2);
 
     var retorter = jsonRetorter(logger),
         routeHandler = retorter(function(retort){
@@ -133,14 +148,16 @@ test('retort handles non standard error code', function(t){
         });
 
     fakeServerCall(routeHandler, {}, {
-        end: function(){
-            t.equal(this.statusCode, 666);
-        }
+        writeHead: function(code, headers){
+            t.equal(code, 666);
+            t.deepEqual(headers, expectedHeaders);
+        },
+        end: function(){}
     });
 });
 
 test('retort handles non standard error code as string', function(t){
-    t.plan(1);
+    t.plan(2);
 
     var retorter = jsonRetorter(logger),
         routeHandler = retorter(function(retort){
@@ -148,14 +165,16 @@ test('retort handles non standard error code as string', function(t){
         });
 
     fakeServerCall(routeHandler, {}, {
-        end: function(){
-            t.equal(this.statusCode, 500);
-        }
+        writeHead: function(code, headers){
+            t.equal(code, 500);
+            t.deepEqual(headers, expectedHeaders);
+        },
+        end: function(){}
     });
 });
 
 test('retort handles standard error code as string', function(t){
-    t.plan(1);
+    t.plan(2);
 
     var retorter = jsonRetorter(logger),
         routeHandler = retorter(function(retort){
@@ -163,14 +182,16 @@ test('retort handles standard error code as string', function(t){
         });
 
     fakeServerCall(routeHandler, {}, {
-        end: function(){
-            t.equal(this.statusCode, 411);
-        }
+        writeHead: function(code, headers){
+            t.equal(code, 411);
+            t.deepEqual(headers, expectedHeaders);
+        },
+        end: function(){}
     });
 });
 
 test('retort upgrades error code less than 400', function(t){
-    t.plan(1);
+    t.plan(2);
 
     var retorter = jsonRetorter(logger),
         routeHandler = retorter(function(retort){
@@ -178,29 +199,16 @@ test('retort upgrades error code less than 400', function(t){
         });
 
     fakeServerCall(routeHandler, {}, {
-        end: function(){
-            t.equal(this.statusCode, 500);
-        }
-    });
-});
-
-test('retort handles non standard error code', function(t){
-    t.plan(1);
-
-    var retorter = jsonRetorter(logger),
-        routeHandler = retorter(function(retort){
-            retort.error(new errors.BaseError({code: 666}));
-        });
-
-    fakeServerCall(routeHandler, {}, {
-        end: function(){
-            t.equal(this.statusCode, 666);
-        }
+        writeHead: function(code, headers){
+            t.equal(code, 500);
+            t.deepEqual(headers, expectedHeaders);
+        },
+        end: function(){}
     });
 });
 
 test('retort sends 404 on .okOrNotFound with no data', function(t){
-    t.plan(1);
+    t.plan(2);
 
     var retorter = jsonRetorter(logger),
         routeHandler = retorter(function(retort){
@@ -208,14 +216,16 @@ test('retort sends 404 on .okOrNotFound with no data', function(t){
         });
 
     fakeServerCall(routeHandler, {}, {
-        end: function(){
-            t.equal(this.statusCode, 404);
-        }
+        writeHead: function(code, headers){
+            t.equal(code, 404);
+            t.deepEqual(headers, expectedHeaders);
+        },
+        end: function(){}
     });
 });
 
 test('retort sends 200 on .okOrNotFound with data', function(t){
-    t.plan(2);
+    t.plan(3);
 
     var retorter = jsonRetorter(logger),
         testData = { foo: 'bar' },
@@ -224,8 +234,11 @@ test('retort sends 200 on .okOrNotFound with data', function(t){
         });
 
     fakeServerCall(routeHandler, {}, {
+        writeHead: function(code, headers){
+            t.equal(code, 200);
+            t.deepEqual(headers, expectedHeaders);
+        },
         end: function(data){
-            t.equal(this.statusCode, 200);
             t.equal(data, JSON.stringify(testData));
         }
     });
@@ -269,7 +282,7 @@ test('can override methods', function(t){
 });
 
 test('use generic-errors', function(t){
-    t.plan(2);
+    t.plan(3);
 
     var retorter = jsonRetorter(logger),
         notFoundError = new errors.NotFound('Totally not found'),
@@ -278,15 +291,18 @@ test('use generic-errors', function(t){
         });
 
     fakeServerCall(routeHandler, {}, {
+        writeHead: function(code, headers){
+            t.equal(code, 404);
+            t.deepEqual(headers, expectedHeaders);
+        },
         end: function(data){
-            t.equal(this.statusCode, 404);
             t.equal(data, JSON.stringify(notFoundError));
         }
     });
 });
 
 test('use serialised generic error', function(t){
-    t.plan(2);
+    t.plan(3);
 
     var retorter = jsonRetorter(logger),
         notFoundError = {
@@ -299,8 +315,11 @@ test('use serialised generic error', function(t){
         });
 
     fakeServerCall(routeHandler, {}, {
+        writeHead: function(code, headers){
+            t.equal(code, 404);
+            t.deepEqual(headers, expectedHeaders);
+        },
         end: function(data){
-            t.equal(this.statusCode, 404);
             t.equal(data, JSON.stringify(notFoundError));
         }
     });

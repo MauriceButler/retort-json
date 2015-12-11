@@ -33,7 +33,7 @@ function createErrorHandler(logger, code){
 
         logger.info(error);
 
-        response.statusCode = error.code;
+        response.writeHead(error.code, {'Content-Type': 'application/json'});
         response.end(JSON.stringify(error));
     };
 }
@@ -45,7 +45,7 @@ module.exports = function(logger){
 
     return createRetorter({
         ok: function(request, response, data){
-            response.statusCode = 200;
+            response.writeHead(200, {'Content-Type': 'application/json'});
             response.end(JSON.stringify(data));
         },
         okOrNotFound: function(request, response, data){
