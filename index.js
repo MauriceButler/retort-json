@@ -61,6 +61,7 @@ module.exports = function(logger){
             response.end();
         },
         error: createErrorHandler(logger),
+        badRequest: createErrorHandler(logger, 400),
         unauthorised: createErrorHandler(logger, 401),
         forbidden: createErrorHandler(logger, 403),
         notFound: createErrorHandler(logger, 404),

@@ -37,6 +37,23 @@ test('retort sends 200 on .ok', function(t){
     });
 });
 
+test('retort sends 40 on .badRequest', function(t){
+    t.plan(2);
+
+    var retorter = jsonRetorter(logger),
+        routeHandler = retorter(function(retort){
+            retort.badRequest();
+        });
+
+    fakeServerCall(routeHandler, {}, {
+        writeHead: function(code, headers){
+            t.equal(code, 400);
+            t.deepEqual(headers, expectedHeaders);
+        },
+        end: function(){}
+    });
+});
+
 test('retort sends 404 on .notFound', function(t){
     t.plan(2);
 
