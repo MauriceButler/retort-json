@@ -24,7 +24,15 @@ function transformError(error, code){
         error.code = 500;
     }
 
-    return new errors.BaseError(error);
+    if(!errors.BaseError.isGenericError(error)){
+        var stack = error.stack;
+
+        error = new errors.BaseError(error);
+
+        error.stack = stack || error.stack;
+    }
+
+    return error;
 }
 
 function createErrorHandler(logger, code){

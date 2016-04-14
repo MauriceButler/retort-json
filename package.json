@@ -17,11 +17,11 @@
   },
   "homepage": "https://github.com/MauriceButler/retort-json#readme",
   "dependencies": {
-    "generic-errors": "^2.0.0",
+    "generic-errors": "^2.0.2",
     "retort": "^1.0.1"
   },
   "devDependencies": {
-    "tape": "^4.2.1"
+    "tape": "^4.5.1"
   },
   "keywords": [
     "request",
